@@ -1,0 +1,40 @@
+# Secrets — never commit
+.env
+*.env
+!.env.example
+docker/.env
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Frontend dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

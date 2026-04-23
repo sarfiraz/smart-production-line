@@ -1,0 +1,110 @@
+services:
+  # --------------------------
+  # EMQX Broker (MQTT)
+  # --------------------------
+  emqx:
+    image: emqx/emqx:latest
+    container_name: emqx
+    ports:
+      - "1883:1883"   # MQTT TCP port
+      - "8083:8083"   # MQTT WebSocket
+      - "18083:18083" # EMQX Dashboard
+    volumes:
+      - A:/dip_docker_vols/emqx_data:/opt/emqx/data
+    networks:
+      - iot-network
+    restart: always
+
+  # --------------------------
+  # InfluxDB 2.x (time-series database)
+  # --------------------------
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"   # Web UI + API
+    volumes:
+      - A:/dip_docker_vols/influxdb_data:/var/lib/influxdb2
+    env_file:
+      - .env
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_RETENTION=${INFLUXDB_RETENTION}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+    networks:
+      - iot-network
+    restart: always
+
+  # --------------------------
+  # Node-RED (flows / automation)
+  # --------------------------
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    ports:
+      - "1880:1880"   # Node-RED web UI
+    volumes:
+      - A:/dip_docker_vols/nodered_data:/data
+    networks:
+      - iot-network
+    restart: always
+
+  # --------------------------
+  # Backend API (FastAPI)
+  # --------------------------
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_DIR=/app/data
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_ORG=${INFLUXDB_ORG:-my-org}
+      - INFLUXDB_BUCKET=${INFLUXDB_BUCKET:-revpi_data}
+      - MQTT_HOST=emqx
+      - MQTT_PORT=1883
+      - EMQX_TOKEN=${EMQX_TOKEN}
+    depends_on:
+      - emqx
+      - influxdb
+    volumes:
+      - A:/dip_docker_vols/backend_data:/app/data
+    networks:
+      - iot-network
+    restart: always
+
+  # --------------------------
+  # Frontend (React + Vite)
+  # --------------------------
+  frontend:
+    build: ../frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - VITE_WS_URL=ws://localhost:8000/ws/live
+    volumes:
+      - A:/dip_docker_vols/frontend_data:/usr/src/app/node_cache
+    depends_on:
+      - backend
+    networks:
+      - iot-network
+    restart: always
+
+# --------------------------
+# Networks
+# --------------------------
+networks:
+  iot-network:
+    driver: bridge
