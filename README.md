@@ -94,7 +94,7 @@ without a valid PiCtory configuration.
 - Git installed
 
 ### Step 1 — Clone the repository
-- git clone https://github.com/YOUR_USERNAME/smart-production-line.git
+- git clone https://github.com/sarfiraz/smart-production-line.git
 - cd smart-production-line
 ### Step 2 — Create your environment file
 - cp docker/.env.example docker/.env
@@ -161,8 +161,8 @@ RevPi powers on.
 
 Create the service file:
  - sudo nano /etc/systemd/system/sarfiraz-revpi-production-supervisor.service
- Paste this content:
- ```[Unit]
+ - Paste this content:
+`[Unit]
 Description=Sarfiraz RevPi Production Supervisor
 After=network.target
 StartLimitIntervalSec=0
@@ -176,7 +176,7 @@ RestartSec=3
 StandardOutput=journal
 StandardError=journal
 [Install]
-WantedBy=multi-user.target```
+WantedBy=multi-user.target`
 
 Save and exit.
 
@@ -248,13 +248,13 @@ With the PC side running, from the repository root:
 | `docs/testing_protocol.md` | Testing methodology and test cases |
 
 ---
-
+```
 ## Repository Structure
-smart-production-line/
+`smart-production-line/
 ├── sarfiraz_revpi_runtime/   Revolution Pi runtime (supervisor, worker, config)
 ├── backend/                  FastAPI backend — ML pipeline, ChatGPT service, API
 ├── frontend/                 React monitoring dashboard
 ├── training/                 ML model training data and notebooks
 ├── docker/                   Docker Compose stack and environment template
 ├── docs/                     System documentation
-└── README.md
+└── README.md`
