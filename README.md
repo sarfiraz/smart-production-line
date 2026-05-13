@@ -243,6 +243,7 @@ With the PC side running, from the repository root:
 | File | Contents |
 |------|----------|
 | `docs/mqtt_contract.md` | All MQTT topics, payload formats, and QoS levels |
+| `docs/diagrams/` | Editable SVG source files for all system architecture diagrams (open in draw.io) |
 | `docs/control_and_safety_policy.md` | Machine safety rules and control logic |
 | `docs/punching_machine_full_technical_docs.md` | Hardware wiring and sensor documentation |
 | `docs/testing_protocol.md` | Testing methodology and test cases |
@@ -257,4 +258,5 @@ With the PC side running, from the repository root:
 ├── training/                 ML model training data and notebooks
 ├── docker/                   Docker Compose stack and environment template
 ├── docs/                     System documentation
+│   └── diagrams/           Editable SVG source files for all architecture diagrams
 └── README.md`
